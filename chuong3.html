@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Triết học - Chương 3: CNDVLS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f6f9;
+            color: #333;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .question-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .question-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #16a085;
+            margin-bottom: 12px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 8px;
+        }
+        .options label {
+            display: block;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .options label:hover {
+            background: #e9ecef;
+        }
+        .options input[type="radio"] {
+            margin-right: 10px;
+        }
+        .explanation {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #e8f4f8;
+            border-left: 5px solid #3498db;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .btn-submit:hover {
+            background: #219150;
+        }
+        #result-box {
+            display: none;
+            text-align: center;
+            background: #2c3e50;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 1.3em;
+        }
+        .correct {
+            background-color: #d4edda !important;
+            border-color: #c3e6cb !important;
+            color: #155724;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #f8d7da !important;
+            border-color: #f5c6cb !important;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>TRẮC NGHIỆM CHƯƠNG 3: CHỦ NGHĨA DUY VẬT LỊCH SỬ</h1>
+    <div id="result-box"></div>
+    <form id="quiz-form">
+        <div id="quiz-container"></div>
+        <button type="button" class="btn-submit" onclick="checkAnswers()">NỘP BÀI VÀ XEM ĐÁP ÁN</button>
+    </form>
+
+    <script>
+        const quizData = [
+            {
+                q: "1. Hạn chế lớn nhất của các nhà triết học duy tâm trước C.Mác khi xem xét lịch sử xã hội là gì?",
+                a: ["A. Tuyệt đối hóa vai trò của kinh tế.", "B. Đi tìm nguyên nhân phát triển lịch sử ở tư tưởng, coi cá nhân/anh hùng quyết định lịch sử.", "C. Phủ nhận hoàn toàn vai trò của hoạt động tinh thần.", "D. Áp dụng quy luật sinh học một cách máy móc."],
+                correct: 1,
+                exp: "Triết học duy tâm trước Mác tìm nguyên nhân phát triển lịch sử ở tư tưởng và coi cá nhân anh hùng quyết định lịch sử."
+            },
+            {
+                q: "2. Khuyết điểm chung của các nhà triết học duy vật trước C.Mác khi xem xét xã hội là gì?",
+                a: ["A. Sử dụng phương pháp luận duy tâm hoàn toàn.", "B. Sử dụng phương pháp tư duy siêu hình và thiếu tính thực tiễn.", "C. Phủ nhận sự tồn tại của thế giới vật chất.", "D. Tuyệt đối hóa vai trò của quần chúng nhân dân."],
+                correct: 1,
+                exp: "Khuyết điểm chung của các nhà duy vật trước Mác là tư duy siêu hình và thiếu tính thực tiễn."
+            },
+            {
+                q: "3. Tiền đề đầu tiên của toàn bộ lịch sử nhân loại theo C.Mác và Ph.Ăngghen là gì?",
+                a: ["A. Sự xuất hiện của nhà nước và pháp quyền.", "B. Sự phát triển của khoa học kỹ thuật.", "C. Sự tồn tại của những cá nhân con người sống.", "D. Sự xuất hiện của các giai cấp đối kháng."],
+                correct: 2,
+                exp: "C.Mác khẳng định: 'Tiền đề đầu tiên của toàn bộ lịch sử nhân loại thì dĩ nhiên là sự tồn tại của những cá nhân con người sống'."
+            },
+            {
+                q: "4. Theo Ph.Ăngghen, nhân tố quyết định trong lịch sử xét đến cùng là gì?",
+                a: ["A. Môi trường địa lý và dân số.", "B. Ý thức xã hội và tư tưởng chính trị.", "C. Sự sản xuất và tái sản xuất ra đời sống hiện thực.", "D. Đấu tranh giai cấp và cách mạng xã hội."],
+                correct: 2,
+                exp: "Ph.Ăngghen khẳng định nhân tố quyết định trong lịch sử xét đến cùng là sự sản xuất và tái sản xuất ra đời sống hiện thực."
+            },
+            {
+                q: "5. Sản xuất xã hội bao gồm những quá trình cơ bản nào?",
+                a: ["A. Sản xuất công nghiệp, nông nghiệp và dịch vụ.", "B. Sản xuất của cải, sản xuất tri thức và sản xuất nghệ thuật.", "C. Sản xuất vật chất, sản xuất tinh thần và sản xuất ra bản thân con người.", "D. Sản xuất tư liệu sản xuất và sản xuất tư liệu tiêu dùng."],
+                correct: 2,
+                exp: "Sản xuất xã hội gồm: sản xuất vật chất, sản xuất tinh thần và sản xuất ra bản thân con người."
+            },
+            {
+                q: "6. Yếu tố nào đóng vai trò là cơ sở cho sự tồn tại và phát triển của xã hội loài người?",
+                a: ["A. Sản xuất tinh thần.", "B. Sản xuất vật chất.", "C. Sản xuất ra bản thân con người.", "D. Quản lý hành chính nhà nước."],
+                correct: 1,
+                exp: "Sản xuất vật chất là cơ sở cho sự tồn tại và phát triển của xã hội."
+            },
+            {
+                q: "7. Lực lượng sản xuất (LLSX) là sự kết hợp giữa hai nhân tố cơ bản nào?",
+                a: ["A. Công cụ lao động và đối tượng lao động.", "B. Người lao động và tư liệu sản xuất.", "C. Tư liệu lao động và phương tiện lao động.", "D. Khoa học công nghệ và quản lý sản xuất."],
+                correct: 1,
+                exp: "LLSX là sự kết hợp giữa người lao động với tư liệu sản xuất (TLSX)."
+            },
+            {
+                q: "8. Cấu trúc của Tư liệu sản xuất (TLSX) bao gồm những gì?",
+                a: ["A. Công cụ lao động và phương tiện lao động.", "B. Người lao động và công cụ lao động.", "C. Đối tượng lao động và tư liệu lao động.", "D. Nguyên liệu thô và thành phẩm."],
+                correct: 2,
+                exp: "Cấu trúc TLSX gồm: đối tượng lao động và tư liệu lao động."
+            },
+            {
+                q: "9. Yếu tố nào trong lực lượng sản xuất mang tính 'động' và 'cách mạng' nhất, quyết định sự thay thế của các hình thái kinh tế - xã hội?",
+                a: ["A. Đối tượng lao động.", "B. Công cụ lao động.", "C. Người lao động.", "D. Phương tiện lao động."],
+                correct: 1,
+                exp: "Công cụ lao động là yếu tố 'động' và 'cách mạng', quyết định sự thay thế của hình thái kinh tế - xã hội."
+            },
+            {
+                q: "10. Yếu tố nào giữ vị trí hàng đầu trong các yếu tố cấu thành lực lượng sản xuất?",
+                a: ["A. Khoa học kỹ thuật.", "B. Công cụ lao động.", "C. Người lao động.", "D. Phương tiện quản lý."],
+                correct: 2,
+                exp: "Trong các yếu tố của LLSX, người lao động giữ vị trí hàng đầu vì họ tạo ra và sử dụng TLSX."
+            },
+            {
+                q: "11. Luận điểm 'Những thời đại kinh tế khác nhau không phải ở chỗ chúng sản xuất ra cái gì mà là ở chỗ chúng sản xuất bằng cách nào, với những tư liệu lao động nào' là của ai?",
+                a: ["A. V.I. Lênin.", "B. Ph. Ăngghen.", "C. C. Mác.", "D. Hồ Chí Minh."],
+                correct: 2,
+                exp: "Đây là câu nói nổi tiếng của C.Mác trong tập 23 Toàn tập."
+            },
+            {
+                q: "12. Quan hệ sản xuất (QHSX) bao gồm ba mặt quan hệ nào?",
+                a: ["A. Sở hữu TLSX; Tổ chức quản lý; Phân phối sản phẩm.", "B. Kỹ thuật sản xuất; Phân công lao động; Trao đổi hàng hóa.", "C. Sản xuất; Lưu thông; Tiêu dùng.", "D. Sở hữu nhà nước; Sở hữu tập thể; Sở hữu tư nhân."],
+                correct: 0,
+                exp: "QHSX gồm 3 mặt: Sở hữu TLSX, Tổ chức/quản lý sản xuất, Phân phối sản phẩm."
+            },
+            {
+                q: "13. Trong 3 mặt của QHSX, quan hệ nào giữ vai trò xuất phát, cơ bản, trung tâm và quyết định các quan hệ khác?",
+                a: ["A. Quan hệ tổ chức và quản lý sản xuất.", "B. Quan hệ phân phối sản phẩm.", "C. Quan hệ sở hữu đối với tư liệu sản xuất.", "D. Cả ba quan hệ có vai trò hoàn toàn bình đẳng."],
+                correct: 2,
+                exp: "Quan hệ sở hữu TLSX là quan hệ xuất phát, cơ bản, trung tâm, quyết định các quan hệ khác."
+            },
+            {
+                q: "14. Quy luật xã hội nào là cơ bản nhất của sự vận động và phát triển xã hội loài người?",
+                a: ["A. Quy luật đấu tranh giai cấp.", "B. Quy luật QHSX phù hợp với trình độ phát triển của LLSX.", "C. Quy luật tồn tại xã hội quyết định ý thức xã hội.", "D. Quy luật kiến trúc thượng tầng tác động trở lại cơ sở hạ tầng."],
+                correct: 1,
+                exp: "Quy luật QHSX phù hợp với trình độ phát triển của LLSX là quy luật cơ bản nhất của sự phát triển xã hội."
+            },
+            {
+                q: "15. Khi QHSX trở nên lạc hậu hoặc vượt trước không phù hợp với trình độ LLSX thì sẽ tác động thế nào đến LLSX?",
+                a: ["A. Thúc đẩy LLSX phát triển nhanh chóng.", "B. Không ảnh hưởng gì đến LLSX.", "C. Kìm hãm, thậm chí phá hoại sự phát triển của LLSX.", "D. Biến biến LLSX thành ý thức xã hội."],
+                correct: 2,
+                exp: "QHSX không phù hợp (lạc hậu hoặc vượt trước) sẽ kìm hãm, phá hoại LLSX."
+            },
+            {
+                q: "16. Khái niệm 'Cơ sở hạ tầng' (CSHT) trong CNDVLS dùng để chỉ:",
+                a: ["A. Đường xá, cầu cống, điện đường trường trạm của một quốc gia.", "B. Toàn bộ cơ sở vật chất - kỹ thuật hiện có của xã hội.", "C. Toàn bộ những QHSX của một xã hội hợp thành cơ cấu kinh tế của xã hội đó.", "D. Hệ thống các nhà máy, xí nghiệp, khu công nghiệp."],
+                correct: 2,
+                exp: "Cơ sở hạ tầng là toàn bộ những QHSX của một xã hội hợp thành cơ cấu kinh tế của xã hội đó."
+            },
+            {
+                q: "17. Cấu trúc của Cơ sở hạ tầng bao gồm những loại QHSX nào?",
+                a: ["A. QHSX nông nghiệp, QHSX công nghiệp, QHSX dịch vụ.", "B. QHSX thống trị, QHSX tàn dư, QHSX mầm mống.", "C. QHSX tư nhân, QHSX tập thể, QHSX nhà nước.", "D. QHSX hiện đại, QHSX bán hiện đại, QHSX lạc hậu."],
+                correct: 1,
+                exp: "CSHT bao gồm: QHSX thống trị, QHSX tàn dư và QHSX mầm mống."
+            },
+            {
+                q: "18. Yếu tố nào đặc trưng cho Cơ sở hạ tầng của một xã hội nhất định?",
+                a: ["A. Quan hệ sản xuất tàn dư.", "B. Quan hệ sản xuất mầm mống.", "C. Quan hệ sản xuất thống trị.", "D. Sự kết hợp bình đẳng của cả 3 loại QHSX."],
+                correct: 2,
+                exp: "QHSX thống trị đặc trưng cho CSHT của xã hội đó."
+            },
+            {
+                q: "19. Khái niệm 'Kiến trúc thượng tầng' (KTTT) bao gồm những yếu tố nào?",
+                a: ["A. Tư liệu sản xuất và các lực lượng sản xuất.", "B. Toàn bộ những quan điểm, tư tưởng xã hội cùng với những thiết chế tương ứng.", "C. Môi trường địa lý, dân số và phương thức sản xuất.", "D. Các giai cấp, tầng lớp và các tổ chức kinh tế."],
+                correct: 1,
+                exp: "KTTT là toàn bộ quan điểm tư tưởng (chính trị, pháp quyền, đạo đức...) và các thiết chế tương ứng (nhà nước, đảng phái...)."
+            },
+            {
+                q: "20. Yếu tố/bộ phận nào có quyền lực mạnh nhất trong KTTT của xã hội có đối kháng giai cấp?",
+                a: ["A. Giáo hội và tôn giáo.", "B. Các đại biểu triết học.", "C. Nhà nước.", "D. Các đảng phái đối lập."],
+                correct: 2,
+                exp: "Bộ phận có quyền lực mạnh nhất trong KTTT của xã hội có đối kháng giai cấp là nhà nước."
+            },
+            {
+                q: "21. Trong mối quan hệ giữa Cơ sở hạ tầng và Kiến trúc thượng tầng:",
+                a: ["A. KTTT quyết định CSHT.", "B. CSHT quyết định KTTT.", "C. Hai yếu tố độc lập hoàn toàn với nhau.", "D. KTTT tạo ra CSHT hoàn toàn tự phát."],
+                correct: 1,
+                exp: "CSHT quyết định KTTT (quan hệ vật chất quyết định quan hệ tinh thần)."
+            },
+            {
+                q: "22. Tác động của Kiến trúc thượng tầng đối với Cơ sở hạ tầng diễn ra theo những chiều hướng nào?",
+                a: ["A. Luôn luôn thúc đẩy CSHT phát triển.", "B. Luôn luôn kìm hãm CSHT phát triển.", "C. Có thể thúc đẩy (nếu cùng chiều) hoặc kìm hãm (nếu ngược chiều) sự phát triển của CSHT.", "D. KTTT không có khả năng tác động trở lại CSHT."],
+                correct: 2,
+                exp: "KTTT tác động cùng chiều sẽ thúc đẩy kinh tế, tác động ngược chiều sẽ kìm hãm kinh tế."
+            },
+            {
+                q: "23. Cấu trúc cơ bản của một Hình thái kinh tế - xã hội bao gồm 3 yếu tố là:",
+                a: ["A. Địa lý, Dân số, Phương thức sản xuất.", "B. Lực lượng sản xuất, Quan hệ sản xuất (CSHT), Kiến trúc thượng tầng.", "C. Kinh tế, Chính trị, Văn hóa.", "D. Giai cấp thống trị, Giai cấp bị trị, Tầng lớp trung gian."],
+                correct: 1,
+                exp: "Ba yếu tố cấu thành HTKT-XH là LLSX, QHSX (CSHT) và KTTT."
+            },
+            {
+                q: "24. C.Mác khẳng định sự phát triển của các hình thái kinh tế - xã hội là một quá trình:",
+                a: ["A. Lịch sử - tự nhiên.", "B. Chủ quan - ngẫu nhiên.", "C. Do các vĩ nhân, anh hùng quyết định.", "D. Biến đổi tuần hoàn lặp đi lặp lại."],
+                correct: 0,
+                exp: "C.Mác viết: 'Tôi coi sự phát triển của các hình thái kinh tế - xã hội là một quá trình lịch sử - tự nhiên'."
+            },
+            {
+                q: "25. Nguồn gốc, động lực sâu xa thúc đẩy sự vận động, phát triển của các hình thái kinh tế - xã hội là do:",
+                a: ["A. Sự thay đổi tư tưởng của giai cấp thống trị.", "B. Sự phát triển của Lực lượng sản xuất.", "C. Mệnh lệnh hành chính của nhà nước.", "D. Môi trường tự nhiên biến đổi."],
+                correct: 1,
+                exp: "Sự vận động phát triển xã hội bắt đầu từ sự phát triển của LLSX."
+            },
+            {
+                q: "26. Việc Việt Nam quá độ lên CNXH bỏ qua chế độ TBCN thực chất là bỏ qua yếu tố nào?",
+                a: ["A. Bỏ qua hoàn toàn LLSX tư bản chủ nghĩa.", "B. Bỏ qua việc xác lập vị trí thống trị của QHSX và KTTT tư bản chủ nghĩa.", "C. Bỏ qua các thành tựu khoa học - công nghệ của chủ nghĩa tư bản.", "D. Bỏ qua việc phát triển kinh tế hàng hóa."],
+                correct: 1,
+                exp: "Bỏ qua chế độ TBCN ở Việt Nam là bỏ qua việc xác lập vị trí thống trị của QHSX và KTTT TBCN."
+            },
+            {
+                q: "27. Tác giả của cuốn sách đưa ra cách tiếp cận lịch sử bằng 3 'làn sóng' văn minh (Nông nghiệp, Công nghiệp, Sau công nghiệp) là ai?",
+                a: ["A. Alvin Toffler.", "B. C. Mác.", "C. V.I. Lênin.", "D. Ph. Ăngghen."],
+                correct: 0,
+                exp: "Alvin Toffler chia lịch sử thành 3 nền văn minh (3 làn sóng)."
+            },
+            {
+                q: "28. Đóng góp mới của C.Mác về lý luận giai cấp (thể hiện trong thư gửi G. Vây-đơ-mai-ơ năm 1852) là gì?",
+                a: ["A. Lần đầu tiên phát hiện ra sự tồn tại của giai cấp.", "B. Chứng minh sự tồn tại giai cấp gắn với giai đoạn phát triển lịch sử nhất định; đấu tranh giai cấp dẫn tới chuyên chính vô sản.", "C. Khẳng định giai cấp tồn tại vĩnh viễn cùng lịch sử loài người.", "D. Cho rằng giai cấp chỉ xuất hiện ở thời kỳ tư bản chủ nghĩa."],
+                correct: 1,
+                exp: "Thư gửi G.Vây-đơ-mai-ơ chứng minh 3 điểm mới của C.Mác về lý luận giai cấp và chuyên chính vô sản."
+            },
+            {
+                q: "29. Định nghĩa khoa học hoàn chỉnh về giai cấp được nhà kinh điển nào đưa ra trong tác phẩm 'Sáng kiến vĩ đại'?",
+                a: ["A. C. Mác.", "B. Ph. Ăngghen.", "C. V.I. Lênin.", "D. J. Stalin."],
+                correct: 2,
+                exp: "V.I.Lênin đưa ra định nghĩa giai cấp trong tác phẩm 'Sáng kiến vĩ đại'."
+            },
+            {
+                q: "30. Tiêu chuẩn khách quan quan trọng nhất để phân biệt các giai cấp khác nhau là gì?",
+                a: ["A. Mức thu nhập và lối sống.", "B. Uy tín xã hội và trình độ học vấn.", "C. Quan hệ đối với tư liệu sản xuất.", "D. Chức vụ trong bộ máy nhà nước."],
+                correct: 2,
+                exp: "Quan hệ đối với TLSX là quan hệ cơ bản, chủ yếu nhất quyết định địa vị giai cấp."
+            },
+            {
+                q: "31. Thực chất của quan hệ giai cấp là gì?",
+                a: ["A. Quan hệ hợp tác bình đẳng cùng phát triển.", "B. Quan hệ giữa bóc lột và bị bóc lột (tập đoàn này chiếm đoạt lao động của tập đoàn khác).", "C. Quan hệ giúp đỡ lẫn nhau trong sản xuất vật chất.", "D. Quan hệ phân công lao động kỹ thuật đơn thuần."],
+                correct: 1,
+                exp: "Thực chất quan hệ giai cấp là tập đoàn này chiếm đoạt lao động của tập đoàn khác."
+            },
+            {
+                q: "32. Nguyên nhân sâu xa (vật chất/kinh tế) dẫn đến sự xuất hiện của giai cấp là gì?",
+                a: ["A. Sự phát triển LLSX làm tăng năng suất lao động, xuất hiện 'của dư'.", "B. Các cuộc chiến tranh cướp bóc giữa các bộ lạc.", "C. Mệnh lệnh của các thủ lĩnh bộ lạc.", "D. Do sự khác biệt về năng lực tư duy của mỗi người."],
+                correct: 0,
+                exp: "LLSX phát triển làm tăng năng suất, xuất hiện 'của dư' là nguyên nhân sâu xa sinh ra giai cấp."
+            },
+            {
+                q: "33. Nguyên nhân trực tiếp đưa tới sự ra đời của giai cấp là gì?",
+                a: ["A. Sự phân công lao động xã hội.", "B. Xã hội xuất hiện chế độ tư hữu về tư liệu sản xuất.", "C. Sự ra đời của nhà nước.", "D. Sự phân hóa giàu nghèo ngẫu nhiên."],
+                correct: 1,
+                exp: "Sự xuất hiện chế độ tư hữu về TLSX là nguyên nhân trực tiếp dẫn tới sự ra đời của giai cấp."
+            },
+            {
+                q: "34. Giai cấp cơ bản trong một kết cấu xã hội - giai cấp là giai cấp:",
+                a: ["A. Gắn liền với phương thức sản xuất mầm mống.", "B. Gắn liền với phương thức sản xuất tàn dư.", "C. Gắn liền với phương thức sản xuất thống trị.", "D. Không tham gia vào quá trình sản xuất."],
+                correct: 2,
+                exp: "Giai cấp cơ bản là giai cấp gắn với phương thức sản xuất thống trị."
+            },
+            {
+                q: "35. Hai giai cấp cơ bản đại diện cho phương thức sản xuất phong kiến là:",
+                a: ["A. Chủ nô và Nô lệ.", "B. Địa chủ và Nông dân (nông nô).", "C. Tư sản và Vô sản.", "D. Quý tộc và Bình dân."],
+                correct: 1,
+                exp: "Trong chế độ phong kiến, 2 giai cấp cơ bản là Địa chủ và Nông dân (nông nô)."
+            },
+            {
+                q: "36. Thực chất của đấu tranh giai cấp trong xã hội có đối kháng giai cấp là:",
+                a: ["A. Cuộc đấu tranh vì những tham vọng cá nhân.", "B. Cuộc đấu tranh giữa quần chúng bị áp bức, bóc lột chống lại giai cấp áp bức, bóc lột.", "C. Cuộc xung đột giữa các tôn giáo khác nhau.", "D. Sự tranh giành quyền lực giữa các nhóm trong giai cấp thống trị."],
+                correct: 1,
+                exp: "Đấu tranh giai cấp thực chất là cuộc đấu tranh của quần chúng lao động bị áp bức chống giai cấp áp bức."
+            },
+            {
+                q: "37. Động lực trực tiếp, quan trọng thúc đẩy sự phát triển của xã hội có đối kháng giai cấp là:",
+                a: ["A. Đấu tranh giai cấp.", "B. Đấu tranh chống thiên tai.", "C. Sự phát triển văn học nghệ thuật.", "D. Sự tăng trưởng dân số tự nhiên."],
+                correct: 0,
+                exp: "Trong xã hội có giai cấp, đấu tranh giai cấp là động lực trực tiếp, quan trọng của lịch sử."
+            },
+            {
+                q: "38. Mục đích cao nhất mà một cuộc đấu tranh giai cấp cách mạng cần đạt được là gì?",
+                a: ["A. Tiêu diệt vật chất giai cấp đối lập.", "B. Giải phóng LLSX khỏi sự kìm hãm của QHSX lỗi thời, thúc đẩy xã hội phát triển.", "C. Tăng lương và giảm giờ làm cho người lao động.", "D. Trả thù giai cấp thống trị cũ."],
+                correct: 1,
+                exp: "Mục đích cao nhất là giải phóng LLSX khỏi sự kìm hãm của QHSX lỗi thời."
+            },
+            {
+                q: "39. Đâu là 3 hình thức đấu tranh cơ bản của giai cấp vô sản khi chưa có chính quyền?",
+                a: ["A. Đấu tranh quân sự, Đấu tranh ngoại giao, Đấu tranh nghị viện.", "B. Đấu tranh kinh tế, Đấu tranh chính trị, Đấu tranh tư tưởng.", "C. Đấu tranh biểu tình, Đấu tranh bãi công, Đấu tranh vũ trang.", "D. Đấu tranh hợp pháp, Đấu tranh không hợp pháp, Đấu tranh nửa hợp pháp."],
+                correct: 1,
+                exp: "Ba hình thức cơ bản khi chưa có chính quyền là: Đấu tranh kinh tế, chính trị và tư tưởng."
+            },
+            {
+                q: "40. Trong các hình thức đấu tranh của giai cấp vô sản khi chưa có chính quyền, hình thức nào là cao nhất, có ý nghĩa quyết định?",
+                a: ["A. Đấu tranh kinh tế.", "B. Đấu tranh chính trị.", "C. Đấu tranh tư tưởng.", "D. Đấu tranh văn hóa."],
+                correct: 1,
+                exp: "Đấu tranh chính trị là hình thức đấu tranh cao nhất, quyết định nhất."
+            },
+            {
+                q: "41. Nhiệm vụ trước mắt của hình thức đấu tranh kinh tế của giai cấp vô sản là gì?",
+                a: ["A. Lật đổ chính quyền tư sản.", "B. Bảo vệ lợi ích hàng ngày của công nhân (tăng lương, giảm giờ làm...).", "C. Xây dựng hệ tư tưởng Mác - Lênin.", "D. Thiết lập chuyên chính vô sản."],
+                correct: 1,
+                exp: "Đấu tranh kinh tế nhằm bảo vệ những lợi ích hàng ngày của công nhân (lương, giờ làm...)."
+            },
+            {
+                q: "42. Đấu tranh tư tưởng của giai cấp vô sản nhằm mục đích gì?",
+                a: ["A. Đập tan hệ tư tưởng tư sản, trang bị chủ nghĩa Mác - Lênin cho quần chúng.", "B. Tăng năng suất lao động trong xí nghiệp.", "C. Đòi giai cấp tư sản chia sẻ lợi nhuận.", "D. Tạo sự hòa hợp giai cấp giữa vô sản và tư sản."],
+                correct: 0,
+                exp: "Đấu tranh tư tưởng nhằm đập tan hệ tư tưởng tư sản, vũ trang chủ nghĩa Mác - Lênin cho phong trào."
+            },
+            {
+                q: "43. Sau khi giành được chính quyền, thực chất cuộc đấu tranh giai cấp của giai cấp vô sản trong thời kỳ quá độ là cuộc đấu tranh:",
+                a: ["A. 'Ai thắng ai' giữa con đường XHCN và con đường TBCN.", "B. Tiêu diệt toàn bộ giai cấp tư sản về mặt thể xác.", "C. Đấu tranh tranh giành thị trường quốc tế.", "D. Duy trì nguyên vẹn trật tự xã hội cũ."],
+                correct: 0,
+                exp: "Thời kỳ quá độ, đấu tranh giai cấp thực chất là cuộc đấu tranh 'ai thắng ai' giữa đường lối XHCN và TBCN."
+            },
+            {
+                q: "44. Trong thời kỳ quá độ lên CNXH, hai nhiệm vụ chiến lược mà giai cấp vô sản phải đồng thời thực hiện là:",
+                a: ["A. Đẩy mạnh sản xuất xuất khẩu và Nhập khẩu công nghệ.", "B. Bảo vệ thành quả cách mạng và Cải tạo xã hội cũ, xây dựng xã hội mới.", "C. Xóa bỏ nông thôn và Đô thị hóa.", "D. Đấu tranh kinh tế và Đấu tranh quân sự."],
+                correct: 1,
+                exp: "Hai nhiệm vụ chiến lược: Bảo vệ thành quả cách mạng và Cải tạo xã hội cũ, xây dựng xã hội mới."
+            },
+            {
+                q: "45. C.Mác và Ph.Ăngghen coi cuộc đấu tranh giai cấp nào là 'đòn bẩy vĩ đại' của cuộc cách mạng xã hội hiện đại?",
+                a: ["A. Đấu tranh giữa nô lệ và chủ nô.", "B. Đấu tranh giữa nông dân và địa chủ.", "C. Đấu tranh giữa giai cấp tư sản và giai cấp vô sản.", "D. Đấu tranh giữa thợ cả và thợ bạn."],
+                correct: 2,
+                exp: "Đấu tranh giữa giai cấp tư sản và vô sản được Mác - Ăngghen coi là 'đòn bẩy vĩ đại'."
+            },
+            {
+                q: "46. Yếu tố nào sau đây được Lênin coi là quan trọng nhất, căn bản nhất cho sự thắng lợi hoàn toàn của trật tự xã hội mới (CNXH)?",
+                a: ["A. Sức mạnh quân sự.", "B. Năng suất lao động.", "C. Diện tích lãnh thổ.", "D. Số lượng dân số."],
+                correct: 1,
+                exp: "Lênin nhấn mạnh: Năng suất lao động là cái quan trọng nhất, căn bản nhất cho thắng lợi của trật tự mới."
+            },
+            {
+                q: "47. Mối quan hệ giữa Đấu tranh giai cấp và Liên minh giai cấp là:",
+                a: ["A. Hai mặt loại trừ hoàn toàn lẫn nhau.", "B. Hai mặt gắn bó hữu cơ với nhau để tạo nên sức mạnh cách mạng.", "C. Liên minh giai cấp làm triệt tiêu đấu tranh giai cấp.", "D. Đấu tranh giai cấp không cần đến liên minh giai cấp."],
+                correct: 1,
+                exp: "Đấu tranh giai cấp và liên minh giai cấp là hai mặt gắn bó hữu cơ với nhau."
+            },
+            {
+                q: "48. Khái niệm nào dùng để chỉ 'tổng thể các giai cấp và mối quan hệ giữa các giai cấp tồn tại trong một giai đoạn lịch sử nhất định'?",
+                a: ["A. Kết cấu kinh tế.", "B. Kết cấu xã hội - giai cấp.", "C. Cơ cấu xã hội - dân số.", "D. Thể chế chính trị."],
+                correct: 1,
+                exp: "Định nghĩa về Kết cấu xã hội - giai cấp."
+            },
+            {
+                q: "49. Khoa học trở thành 'lực lượng sản xuất trực tiếp' là đặc điểm nổi bật của thời kỳ nào?",
+                a: ["A. Cách mạng công nghiệp lần thứ nhất (máy hơi nước).", "B. Cách mạng khoa học và công nghệ hiện đại.", "C. Công xã nguyên thủy.", "D. Thời kỳ trung cổ phong kiến."],
+                correct: 1,
+                exp: "Trong cuộc cách mạng khoa học và công nghệ hiện đại, khoa học trở thành LLSX trực tiếp."
+            },
+            {
+                q: "50. Theo CNDVLS, nguyên nhân sâu xa dẫn tới mọi cuộc cách mạng xã hội là mâu thuẫn giữa:",
+                a: ["A. Lực lượng sản xuất mới với Quan hệ sản xuất cũ lỗi thời.", "B. Kiến trúc thượng tầng với Cơ sở hạ tầng.", "C. Các quốc gia dân tộc với nhau.", "D. Các tôn giáo và hệ tư tưởng khác nhau."],
+                correct: 0,
+                exp: "Mâu thuẫn giữa LLSX phát triển với QHSX lỗi thời là nguyên nhân sâu xa của các cuộc cách mạng xã hội."
+            }
+        ];
+
+        function renderQuiz() {
+            const container = document.getElementById("quiz-container");
+            quizData.forEach((item, index) => {
+                let optionsHtml = '';
+                item.a.forEach((opt, optIndex) => {
+                    optionsHtml += `
+                        <li>
+                            <label id="label-${index}-${optIndex}">
+                                <input type="radio" name="question-${index}" value="${optIndex}">
+                                ${opt}
+                            </label>
+                        </li>
+                    `;
+                });
+
+                const card = document.createElement("div");
+                card.className = "question-card";
+                card.innerHTML = `
+                    <div class="question-title">${item.q}</div>
+                    <ul class="options">${optionsHtml}</ul>
+                    <div class="explanation" id="exp-${index}">
+                        <strong>Giải thích:</strong> ${item.exp}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswers() {
+            let score = 0;
+            quizData.forEach((item, index) => {
+                const selectedOption = document.querySelector(`input[name="question-${index}"]:checked`);
+                const expBox = document.getElementById(`exp-${index}`);
+                expBox.style.display = "block";
+
+                // Clear previous styles
+                item.a.forEach((_, optIndex) => {
+                    const label = document.getElementById(`label-${index}-${optIndex}`);
+                    label.classList.remove("correct", "incorrect");
+                });
+
+                // Highlight correct option
+                const correctLabel = document.getElementById(`label-${index}-${item.correct}`);
+                correctLabel.classList.add("correct");
+
+                if (selectedOption) {
+                    const userChoice = parseInt(selectedOption.value);
+                    if (userChoice === item.correct) {
+                        score++;
+                    } else {
+                        const userLabel = document.getElementById(`label-${index}-${userChoice}`);
+                        userLabel.classList.add("incorrect");
+                    }
+                }
+            });
+
+            const resultBox = document.getElementById("result-box");
+            resultBox.style.display = "block";
+            resultBox.innerHTML = `Bạn đã hoàn thành! Kết quả: <strong>${score} / ${quizData.length}</strong> câu đúng.`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize Quiz on page load
+        window.onload = renderQuiz;
+    </script>
+</body>
+</html>
